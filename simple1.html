@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ミニゲーム</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            touch-action: none;
+            background-color: #f0f8ff;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #add8e6;
+            overflow: hidden;
+        }
+
+        #player {
+            position: absolute;
+            bottom: 10px;
+            left: calc(50% - 25px);
+            font-size: 50px;
+        }
+
+        .obstacle,
+        .item {
+            position: absolute;
+            top: 0;
+            font-size: 40px;
+        }
+
+        #scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: #000;
+        }
+
+        #gameOver {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            color: #ff0000;
+            display: none;
+            text-align: center;
+        }
+
+        #restartButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="gameArea">
+        <div id="scoreboard">スコア: 0</div>
+        <div id="player">🐱</div>
+        <div id="gameOver">
+            <div id="gameOverText">ゲームオーバー</div>
+            <div id="finalScore"></div>
+            <button id="restartButton">再スタート</button>
+        </div>
+    </div>
+    <script>
+        let player = document.getElementById('player');
+        let gameArea = document.getElementById('gameArea');
+        let scoreboard = document.getElementById('scoreboard');
+        let gameOverScreen = document.getElementById('gameOver');
+        let restartButton = document.getElementById('restartButton');
+        let finalScore = document.getElementById('finalScore');
+
+        let playerX = window.innerWidth / 2 - 25;
+        let score = 0;
+        let gameInterval;
+        let obstacleInterval;
+        let itemInterval;
+        let gameTime = 60; // 60 seconds
+        let keysPressed = {};
+
+        function startGame() {
+            gameOverScreen.style.display = 'none';
+            score = 0;
+            scoreboard.textContent = 'スコア: ' + score;
+            playerX = window.innerWidth / 2 - 25;
+            player.style.left = playerX + 'px';
+
+            gameInterval = setInterval(gameLoop, 20);
+            obstacleInterval = setInterval(createObstacle, 1000);
+            itemInterval = setInterval(createItem, 3000);
+
+            setTimeout(endGame, gameTime * 1000);
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            clearInterval(obstacleInterval);
+            clearInterval(itemInterval);
+            gameOverScreen.style.display = 'block';
+            finalScore.textContent = 'あなたのスコア: ' + score;
+        }
+
+        function gameLoop() {
+            // キーボード操作による移動
+            if (keysPressed['ArrowLeft']) {
+                playerX -= 5;
+                if (playerX < 0) playerX = 0;
+                player.style.left = playerX + 'px';
+            }
+            if (keysPressed['ArrowRight']) {
+                playerX += 5;
+                if (playerX > window.innerWidth - 50) playerX = window.innerWidth - 50;
+                player.style.left = playerX + 'px';
+            }
+
+            let obstacles = document.getElementsByClassName('obstacle');
+            for (let i = 0; i < obstacles.length; i++) {
+                let obstacle = obstacles[i];
+                let obstacleY = parseFloat(obstacle.style.top);
+                obstacleY += 5;
+                obstacle.style.top = obstacleY + 'px';
+
+                if (obstacleY > window.innerHeight) {
+                    obstacle.remove();
+                } else {
+                    if (checkCollision(player, obstacle)) {
+                        gameOver();
+                    }
+                }
+            }
+
+            let items = document.getElementsByClassName('item');
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+                let itemY = parseFloat(item.style.top);
+                itemY += 3;
+                item.style.top = itemY + 'px';
+
+                if (itemY > window.innerHeight) {
+                    item.remove();
+                } else {
+                    if (checkCollision(player, item)) {
+                        item.remove();
+                        score += 10;
+                        scoreboard.textContent = 'スコア: ' + score;
+                    }
+                }
+            }
+        }
+
+        function createObstacle() {
+            let obstacle = document.createElement('div');
+            obstacle.classList.add('obstacle');
+            obstacle.textContent = '⚽';
+            obstacle.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            obstacle.style.top = '0px';
+            gameArea.appendChild(obstacle);
+        }
+
+        function createItem() {
+            let item = document.createElement('div');
+            item.classList.add('item');
+            item.textContent = '🍎';
+            item.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            item.style.top = '0px';
+            gameArea.appendChild(item);
+        }
+
+        function checkCollision(a, b) {
+            let aRect = a.getBoundingClientRect();
+            let bRect = b.getBoundingClientRect();
+
+            return !(
+                aRect.top > bRect.bottom ||
+                aRect.bottom < bRect.top ||
+                aRect.left > bRect.right ||
+                aRect.right < bRect.left
+            );
+        }
+
+        function gameOver() {
+            endGame();
+        }
+
+        // Touch controls
+        gameArea.addEventListener('touchmove', function (e) {
+            let touch = e.touches[0];
+            playerX = touch.clientX - 25;
+            if (playerX < 0) playerX = 0;
+            if (playerX > window.innerWidth - 50) playerX = window.innerWidth - 50;
+            player.style.left = playerX + 'px';
+            e.preventDefault();
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', function (e) {
+            keysPressed[e.key] = true;
+        });
+
+        document.addEventListener('keyup', function (e) {
+            keysPressed[e.key] = false;
+        });
+
+        restartButton.addEventListener('click', function () {
+            gameOverScreen.style.display = 'none';
+            // Remove existing obstacles and items
+            let obstacles = document.getElementsByClassName('obstacle');
+            while (obstacles[0]) {
+                obstacles[0].parentNode.removeChild(obstacles[0]);
+            }
+            let items = document.getElementsByClassName('item');
+            while (items[0]) {
+                items[0].parentNode.removeChild(items[0]);
+            }
+            keysPressed = {}; // キー押下状態のリセット
+            startGame();
+        });
+
+        // Start the game
+        startGame();
+    </script>
+</body>
+
+</html>
