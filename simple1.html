@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>ミニゲーム</title>
+    <!-- 追加したタグ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             margin: 0;
@@ -22,23 +24,26 @@
 
         #player {
             position: absolute;
-            bottom: 10px;
-            left: calc(50% - 25px);
-            font-size: 50px;
+            bottom: 2vh;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8vh;
+            /* フォントサイズをビュー高さに対する割合で指定 */
         }
 
         .obstacle,
         .item {
             position: absolute;
             top: 0;
-            font-size: 40px;
+            font-size: 6vh;
+            /* フォントサイズをビュー高さに対する割合で指定 */
         }
 
         #scoreboard {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
+            top: 1vh;
+            left: 1vw;
+            font-size: 3vh;
             color: #000;
         }
 
@@ -47,16 +52,16 @@
             top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 36px;
+            font-size: 5vh;
             color: #ff0000;
             display: none;
             text-align: center;
         }
 
         #restartButton {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 24px;
+            margin-top: 2vh;
+            padding: 1vh 2vh;
+            font-size: 3vh;
         }
     </style>
 </head>
@@ -79,7 +84,7 @@
         let restartButton = document.getElementById('restartButton');
         let finalScore = document.getElementById('finalScore');
 
-        let playerX = window.innerWidth / 2 - 25;
+        let playerX = window.innerWidth / 2 - player.offsetWidth / 2;
         let score = 0;
         let gameInterval;
         let obstacleInterval;
@@ -91,7 +96,7 @@
             gameOverScreen.style.display = 'none';
             score = 0;
             scoreboard.textContent = 'スコア: ' + score;
-            playerX = window.innerWidth / 2 - 25;
+            playerX = window.innerWidth / 2 - player.offsetWidth / 2;
             player.style.left = playerX + 'px';
 
             gameInterval = setInterval(gameLoop, 20);
@@ -118,7 +123,7 @@
             }
             if (keysPressed['ArrowRight']) {
                 playerX += 5;
-                if (playerX > window.innerWidth - 50) playerX = window.innerWidth - 50;
+                if (playerX > window.innerWidth - player.offsetWidth) playerX = window.innerWidth - player.offsetWidth;
                 player.style.left = playerX + 'px';
             }
 
@@ -161,7 +166,7 @@
             let obstacle = document.createElement('div');
             obstacle.classList.add('obstacle');
             obstacle.textContent = '⚽';
-            obstacle.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            obstacle.style.left = Math.random() * (window.innerWidth - obstacle.offsetWidth) + 'px';
             obstacle.style.top = '0px';
             gameArea.appendChild(obstacle);
         }
@@ -170,7 +175,7 @@
             let item = document.createElement('div');
             item.classList.add('item');
             item.textContent = '🍎';
-            item.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            item.style.left = Math.random() * (window.innerWidth - item.offsetWidth) + 'px';
             item.style.top = '0px';
             gameArea.appendChild(item);
         }
@@ -194,9 +199,9 @@
         // Touch controls
         gameArea.addEventListener('touchmove', function (e) {
             let touch = e.touches[0];
-            playerX = touch.clientX - 25;
+            playerX = touch.clientX - player.offsetWidth / 2;
             if (playerX < 0) playerX = 0;
-            if (playerX > window.innerWidth - 50) playerX = window.innerWidth - 50;
+            if (playerX > window.innerWidth - player.offsetWidth) playerX = window.innerWidth - player.offsetWidth;
             player.style.left = playerX + 'px';
             e.preventDefault();
         });
