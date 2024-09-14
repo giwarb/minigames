@@ -4,46 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <title>ミニゲーム</title>
-    <!-- 追加したタグ -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ビューポートの設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            touch-action: none;
             background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         #gameArea {
             position: relative;
-            width: 100vw;
-            height: 100vh;
+            width: 360px;
+            height: 640px;
             background-color: #add8e6;
             overflow: hidden;
         }
 
         #player {
             position: absolute;
-            bottom: 2vh;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 8vh;
-            /* フォントサイズをビュー高さに対する割合で指定 */
+            bottom: 10px;
+            left: calc(50% - 25px);
+            font-size: 50px;
         }
 
         .obstacle,
         .item {
             position: absolute;
             top: 0;
-            font-size: 6vh;
-            /* フォントサイズをビュー高さに対する割合で指定 */
+            font-size: 40px;
         }
 
         #scoreboard {
             position: absolute;
-            top: 1vh;
-            left: 1vw;
-            font-size: 3vh;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
             color: #000;
         }
 
@@ -52,16 +52,16 @@
             top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 5vh;
+            font-size: 36px;
             color: #ff0000;
             display: none;
             text-align: center;
         }
 
         #restartButton {
-            margin-top: 2vh;
-            padding: 1vh 2vh;
-            font-size: 3vh;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 24px;
         }
     </style>
 </head>
@@ -84,7 +84,7 @@
         let restartButton = document.getElementById('restartButton');
         let finalScore = document.getElementById('finalScore');
 
-        let playerX = window.innerWidth / 2 - player.offsetWidth / 2;
+        let playerX = gameArea.offsetWidth / 2 - player.offsetWidth / 2;
         let score = 0;
         let gameInterval;
         let obstacleInterval;
@@ -96,7 +96,7 @@
             gameOverScreen.style.display = 'none';
             score = 0;
             scoreboard.textContent = 'スコア: ' + score;
-            playerX = window.innerWidth / 2 - player.offsetWidth / 2;
+            playerX = gameArea.offsetWidth / 2 - player.offsetWidth / 2;
             player.style.left = playerX + 'px';
 
             gameInterval = setInterval(gameLoop, 20);
@@ -123,7 +123,7 @@
             }
             if (keysPressed['ArrowRight']) {
                 playerX += 5;
-                if (playerX > window.innerWidth - player.offsetWidth) playerX = window.innerWidth - player.offsetWidth;
+                if (playerX > gameArea.offsetWidth - player.offsetWidth) playerX = gameArea.offsetWidth - player.offsetWidth;
                 player.style.left = playerX + 'px';
             }
 
@@ -134,7 +134,7 @@
                 obstacleY += 5;
                 obstacle.style.top = obstacleY + 'px';
 
-                if (obstacleY > window.innerHeight) {
+                if (obstacleY > gameArea.offsetHeight) {
                     obstacle.remove();
                 } else {
                     if (checkCollision(player, obstacle)) {
@@ -150,7 +150,7 @@
                 itemY += 3;
                 item.style.top = itemY + 'px';
 
-                if (itemY > window.innerHeight) {
+                if (itemY > gameArea.offsetHeight) {
                     item.remove();
                 } else {
                     if (checkCollision(player, item)) {
@@ -166,7 +166,7 @@
             let obstacle = document.createElement('div');
             obstacle.classList.add('obstacle');
             obstacle.textContent = '⚽';
-            obstacle.style.left = Math.random() * (window.innerWidth - obstacle.offsetWidth) + 'px';
+            obstacle.style.left = Math.random() * (gameArea.offsetWidth - 40) + 'px';
             obstacle.style.top = '0px';
             gameArea.appendChild(obstacle);
         }
@@ -175,7 +175,7 @@
             let item = document.createElement('div');
             item.classList.add('item');
             item.textContent = '🍎';
-            item.style.left = Math.random() * (window.innerWidth - item.offsetWidth) + 'px';
+            item.style.left = Math.random() * (gameArea.offsetWidth - 40) + 'px';
             item.style.top = '0px';
             gameArea.appendChild(item);
         }
@@ -196,17 +196,18 @@
             endGame();
         }
 
-        // Touch controls
+        // タッチ操作
         gameArea.addEventListener('touchmove', function (e) {
             let touch = e.touches[0];
-            playerX = touch.clientX - player.offsetWidth / 2;
+            let rect = gameArea.getBoundingClientRect();
+            playerX = touch.clientX - rect.left - player.offsetWidth / 2;
             if (playerX < 0) playerX = 0;
-            if (playerX > window.innerWidth - player.offsetWidth) playerX = window.innerWidth - player.offsetWidth;
+            if (playerX > gameArea.offsetWidth - player.offsetWidth) playerX = gameArea.offsetWidth - player.offsetWidth;
             player.style.left = playerX + 'px';
             e.preventDefault();
         });
 
-        // Keyboard controls
+        // キーボード操作
         document.addEventListener('keydown', function (e) {
             keysPressed[e.key] = true;
         });
@@ -217,7 +218,7 @@
 
         restartButton.addEventListener('click', function () {
             gameOverScreen.style.display = 'none';
-            // Remove existing obstacles and items
+            // 障害物とアイテムを削除
             let obstacles = document.getElementsByClassName('obstacle');
             while (obstacles[0]) {
                 obstacles[0].parentNode.removeChild(obstacles[0]);
@@ -230,7 +231,7 @@
             startGame();
         });
 
-        // Start the game
+        // ゲーム開始
         startGame();
     </script>
 </body>
