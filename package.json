@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
+    "phaser": "^3.85.2",
     "vite": "^5.2.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.2",
     "gh-pages": "^6.1.1"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "fix": "biome format --write ./src && biome lint --write ./src",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },

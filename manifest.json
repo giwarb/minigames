@@ -1,9 +1,9 @@
 {
-  "name": "最小構成 PWA",
-  "short_name": "minimum installable pwa",
-  "description": "インストール可能なPWAの最小構成",
+  "name": "ミニゲーム",
+  "short_name": "minigame",
   "icons": [
     {
+      "purpose": "maskable",
       "src": "./icon.png",
       "sizes": "512x512",
       "type": "image/png"
