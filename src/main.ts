@@ -39,4 +39,8 @@ export const game = new Phaser.Game({
       gravity: { x: 0, y: 600 },
     },
   },
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
 });
