@@ -11,15 +11,15 @@
             margin: 0;
         }
     </style>
+</head>
+
+<body>
     <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("./sw.js");
         }
     </script>
     <script type="module" src="./src/main.ts"></script>
-</head>
-
-<body>
 </body>
 
 </html>
