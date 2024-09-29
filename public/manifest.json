@@ -1,15 +1,15 @@
 {
-  "name": "ミニゲーム",
+  "name": "minigame",
   "short_name": "minigame",
   "icons": [
     {
       "purpose": "maskable",
-      "src": "./public/icon.png",
+      "src": "./icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "fullscreen",
   "theme_color": "#B12A34",
   "background_color": "#B12A34"
