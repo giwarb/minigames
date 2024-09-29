@@ -10,14 +10,16 @@
         body {
             margin: 0;
         }
-    </style>
+    </style>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("./sw.js");
+        }
+    </script>
   <script type="module" crossorigin src="./assets/index-ib545_-U.js"></script>
 </head>
 
 <body>
-    <script>
-        navigator.serviceWorker.register("./sw.js");
-    </script>
 </body>
 
 </html>
